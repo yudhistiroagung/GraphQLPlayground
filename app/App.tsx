@@ -21,6 +21,10 @@ import {
 import { graphql } from 'react-apollo';
 import { gql } from 'apollo-boost'
 
+import { Country, GraphQLProps } from './models';
+
+import { CountryList } from './components/CountryList'
+
 const QUERY_GET_COUNTRIES = gql`query getCountries {
     countries {
         code
@@ -30,33 +34,18 @@ const QUERY_GET_COUNTRIES = gql`query getCountries {
 }`
 
 const App = (response: any) => {
-    console.log('response', JSON.stringify(response, null, 4))
-    const { data } = response;
-    const isLoading: boolean = data.loading as boolean
-    const countries: any[] = data.countries || [];
-    
-    // console.log('total', countries.length);
+    const { data } = response as GraphQLProps;
+    const isLoading: boolean = data.loading
+    const countries: Country[] = data.countries || [] as Country[];
+
+    console.log('data', JSON.stringify(data, null, 4));
 
     const renderLoading = () => {
         return <ActivityIndicator size={"large"} color="green" />;
     }
 
-    const renderItems = (countries: any[] = []) => {
-        return (
-            <ScrollView style={styles.listContainer}>
-                {
-                    countries.map((c, idx) => {
-                        return (
-                            <View
-                                key={idx}
-                                style={styles.item}>
-                                <Text>{c.name}</Text>
-                            </View>
-                        )
-                    })
-                }
-            </ScrollView>
-        );
+    const renderItems = (countries: Country[] = []) => {
+        return <CountryList countries={countries} />
     }
 
     const componentToBeRendered = isLoading
