@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import {
     StyleSheet,
     View,
@@ -17,6 +17,7 @@ import {
     ScrollView,
     SafeAreaView,
     Button,
+    TextInput,
 } from 'react-native';
 
 import { graphql } from 'react-apollo';
@@ -100,11 +101,27 @@ interface AddEditScreenProps {
 }
 const AddEditScreen = (props: AddEditScreenProps) => {
     const { user, cancel } = props;
+
+    const [name, setName] = useState(user ? user.name : '')
+    const [email, setEmail] = useState(user ? user.email : '')
+
     return (
         <View style={styles.screen}>
             <Button
                 title="Back"
                 onPress={cancel}
+            />
+            <TextInput
+                style={styles.inputText}
+                value={name}
+                placeholder="Input user name"
+                onChangeText={(value: string) => setName(value)}
+            />
+            <TextInput
+                style={styles.inputText}
+                value={email}
+                placeholder="Input user email"
+                onChangeText={(value: string) => setEmail(value)}
             />
         </View>
     )
@@ -115,7 +132,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#e6e6e6'
+        backgroundColor: '#ffffff'
     },
     screen: {
         flex: 1,
@@ -125,6 +142,14 @@ const styles = StyleSheet.create({
         height: 48,
         backgroundColor: 'blue',
         margin: 8
+    },
+    inputText: {
+        height: 40,
+        margin: 8,
+        paddingLeft: 4,
+        borderWidth: 1,
+        borderColor: '#e6e6e6',
+        borderRadius: 4
     }
 });
 
