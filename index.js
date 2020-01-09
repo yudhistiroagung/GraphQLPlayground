@@ -12,10 +12,9 @@ import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { coerceInputValue } from 'graphql';
 
 const httpLink = createHttpLink({
-    uri: 'https://countries.trevorblades.com/'
+    uri: 'https://graphqlzero.almansi.me/api'
 });
 
 const apolloClient = new ApolloClient({
