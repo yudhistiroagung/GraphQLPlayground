@@ -38,7 +38,7 @@ const QUERY_GET_USERS = gql`query getUsers {
     }
 }`
 
-const MUTATION_ADD_USER = gql`mutation addUser($user: CreatUserInput) {
+const MUTATION_ADD_USER = gql`mutation addUser($user: CreateUserInput!) {
     createUser(input: $user) {
         id
         name
@@ -120,6 +120,7 @@ const AddEditScreen = (props: AddEditScreenProps) => {
         <Mutation mutation={MUTATION_ADD_USER}>
             {(addUser: any, { loading, error, data }: any) => {
                 console.log('error', error);
+                if (!!data) cancel()
                 if (loading) return renderLoadingIndicator()
                 return (
                     <View style={styles.screen}>
