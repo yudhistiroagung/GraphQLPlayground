@@ -9,7 +9,7 @@
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint-fix": "yarn lint --fix",
-    "push" : "git add .; git commit -m 'push to master';"
+    "push" : "git add .; git commit -m 'commiting changes'; git push origin master;"
   },
   "dependencies": {
     "apollo-boost": "^0.4.7",
