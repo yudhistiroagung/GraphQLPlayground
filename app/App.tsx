@@ -20,8 +20,9 @@ import {
     TextInput,
 } from 'react-native';
 
-import { graphql } from 'react-apollo';
+import { graphql, Query, Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost'
+import { } from 'apollo-client'
 
 import { Country, GraphQLProps } from './models';
 import { User } from './models/User';
@@ -37,23 +38,21 @@ const QUERY_GET_USERS = gql`query getUsers {
     }
 }`
 
+const MUTATION_ADD_USER = gql`mutation addUser($user: CreatUserInput) {
+    createUser(input: $user) {
+        id
+        name
+        email
+    }
+}`
+
 const LIST = 'LIST'
 const ADD_EDIT = 'ADD_EDIT'
 
-const App = (response: any) => {
-
-    console.log('data', JSON.stringify(response, null, 4))
+const App = () => {
 
     const [screen, setScreen] = useState(LIST)
     const [user, setUser] = useState(undefined)
-
-    const { data } = response as GraphQLProps;
-    const isLoading: boolean = data.loading
-    const users: User[] = data.users && data.users.data || [] as User[];
-
-    const renderLoading = () => {
-        return <ActivityIndicator size={"large"} color="green" />;
-    }
 
     const toAddUser = () => {
         setScreen(ADD_EDIT)
@@ -63,11 +62,9 @@ const App = (response: any) => {
         setScreen(LIST)
     }
 
-    const componentToBeRendered = isLoading
-        ? renderLoading()
-        : screen === LIST
-            ? <ListScreen users={users} toAddUser={toAddUser} />
-            : <AddEditScreen user={user} cancel={toList} />
+    const componentToBeRendered = screen === LIST
+        ? <ListScreen toAddUser={toAddUser} />
+        : <AddEditScreen user={user} cancel={toList} />
 
     return (
         <SafeAreaView style={styles.container}>
@@ -78,20 +75,33 @@ const App = (response: any) => {
 
 // List screen
 interface ListScreenProps {
-    users: User[];
     toAddUser: () => void;
 }
 const ListScreen = (props: ListScreenProps) => {
-    const { users, toAddUser } = props;
+    const { toAddUser } = props;
+
     return (
-        <View style={styles.screen}>
-            <UserList users={users} />
-            <Button
-                title={'Add New User'}
-                onPress={toAddUser}
-            />
-        </View>
+        <Query query={QUERY_GET_USERS}>
+            {(response: any) => {
+                const { data, loading, error } = response as GraphQLProps;
+                const users: User[] = data && data.users ? data.users.data : [];
+                if (loading) return renderLoadingIndicator()
+                return (
+                    <View style={styles.screen}>
+                        <UserList users={users} />
+                        <Button
+                            title={'Add New User'}
+                            onPress={toAddUser}
+                        />
+                    </View>
+                )
+            }}
+        </Query>
     )
+}
+
+const renderLoadingIndicator = () => {
+    return <ActivityIndicator size={"large"} color="green" />;
 }
 
 // Add edit screen
@@ -103,27 +113,63 @@ const AddEditScreen = (props: AddEditScreenProps) => {
     const { user, cancel } = props;
 
     const [name, setName] = useState(user ? user.name : '')
+    const [username, setUsername] = useState(user ? user.username : '')
     const [email, setEmail] = useState(user ? user.email : '')
 
     return (
-        <View style={styles.screen}>
-            <Button
-                title="Back"
-                onPress={cancel}
-            />
-            <TextInput
-                style={styles.inputText}
-                value={name}
-                placeholder="Input user name"
-                onChangeText={(value: string) => setName(value)}
-            />
-            <TextInput
-                style={styles.inputText}
-                value={email}
-                placeholder="Input user email"
-                onChangeText={(value: string) => setEmail(value)}
-            />
-        </View>
+        <Mutation mutation={MUTATION_ADD_USER}>
+            {(addUser: any, { loading, error, data }: any) => {
+                console.log('error', error);
+                if (loading) return renderLoadingIndicator()
+                return (
+                    <View style={styles.screen}>
+                        <Button
+                            title="Back"
+                            onPress={cancel}
+                        />
+                        <TextInput
+                            style={styles.inputText}
+                            value={name}
+                            autoCorrect={false}
+                            underlineColorAndroid="transparent"
+                            placeholder="Input user name"
+                            onChangeText={(value: string) => setName(value)}
+                        />
+                        <TextInput
+                            style={styles.inputText}
+                            value={username}
+                            autoCorrect={false}
+                            underlineColorAndroid="transparent"
+                            placeholder="Input user username"
+                            onChangeText={(value: string) => setUsername(value)}
+                        />
+                        <TextInput
+                            style={styles.inputText}
+                            value={email}
+                            autoCorrect={false}
+                            underlineColorAndroid="transparent"
+                            placeholder="Input user email"
+                            onChangeText={(value: string) => setEmail(value)}
+                        />
+                        <Button
+                            onPress={() => {
+                                const payload = {
+                                    variables: {
+                                        user: {
+                                            name,
+                                            username,
+                                            email
+                                        },
+                                    }
+                                };
+                                addUser(payload)
+                            }}
+                            title="Add"
+                        />
+                    </View>
+                )
+            }}
+        </Mutation>
     )
 }
 
@@ -153,4 +199,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default graphql(QUERY_GET_USERS)(App);
+export default App;

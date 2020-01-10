@@ -1,6 +1,8 @@
 export interface GraphQLProps {
+    loading: boolean;
+    error: any;
     data : {
-        loading: boolean;
         [key: string]: any;
     }
+    [key: string]: any;
 }
