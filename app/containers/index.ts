@@ -1,1 +1,1 @@
-export * from './UserListContainer'
+export * from './UserList'
