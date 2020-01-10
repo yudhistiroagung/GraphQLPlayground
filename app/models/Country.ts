@@ -1,5 +1,5 @@
 export interface Country {
-    code: string;
-    name: string;
-    phone?: string;
+  code: string;
+  name: string;
+  phone?: string;
 }

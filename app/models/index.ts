@@ -1,2 +1,2 @@
-export * from './Country'
-export * from './GraphQLProps'
+export * from './Country';
+export * from './GraphQLProps';

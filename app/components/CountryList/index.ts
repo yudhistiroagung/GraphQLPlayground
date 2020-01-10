@@ -1,1 +1,1 @@
-export * from './CountryList.component'
+export * from './CountryList.component';

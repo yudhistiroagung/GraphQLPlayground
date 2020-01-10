@@ -1,1 +1,1 @@
-export * from './UserListContainer.component'
+export * from './UserListContainer.component';

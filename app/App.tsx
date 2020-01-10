@@ -8,47 +8,46 @@
  * @format
  */
 
-import React, { useState } from 'react';
-import {
-    StyleSheet,
-    SafeAreaView,
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, SafeAreaView} from 'react-native';
 
-import { UserListContainer, AddUser } from './containers'
+import {UserListContainer, AddUser} from './containers';
 
-const LIST = 'LIST'
-const ADD_EDIT = 'ADD_EDIT'
+const LIST = 'LIST';
+const ADD_EDIT = 'ADD_EDIT';
 
 const App = () => {
+  const [screen, setScreen] = useState(LIST);
 
-    const [screen, setScreen] = useState(LIST)
+  const toAddUser = () => {
+    setScreen(ADD_EDIT);
+  };
 
-    const toAddUser = () => {
-        setScreen(ADD_EDIT)
-    }
+  const toList = () => {
+    setScreen(LIST);
+  };
 
-    const toList = () => {
-        setScreen(LIST)
-    }
-
-    const componentToBeRendered = screen === LIST
-        ? <UserListContainer toAddUser={toAddUser} />
-        : <AddUser cancel={toList} />
-
-    return (
-        <SafeAreaView style={styles.container}>
-            {componentToBeRendered}
-        </SafeAreaView>
+  const componentToBeRendered =
+    screen === LIST ? (
+      <UserListContainer toAddUser={toAddUser} />
+    ) : (
+      <AddUser cancel={toList} />
     );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {componentToBeRendered}
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffffff'
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
 });
 
 export default App;

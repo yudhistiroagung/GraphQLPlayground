@@ -1,1 +1,1 @@
-export * from './AddUser.container'
+export * from './AddUser.container';
