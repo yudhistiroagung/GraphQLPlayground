@@ -8,35 +8,22 @@
  * @format
  */
 
-import React, { useState, useReducer } from 'react';
+import React, { useState } from 'react';
 import {
     StyleSheet,
     View,
     ActivityIndicator,
-    Text,
-    ScrollView,
     SafeAreaView,
     Button,
     TextInput,
 } from 'react-native';
 
-import { graphql, Query, Mutation } from 'react-apollo';
+import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost'
-import { } from 'apollo-client'
 
-import { Country, GraphQLProps } from './models';
 import { User } from './models/User';
-import { UserList } from './components/UserList/UserList.component';
 
-const QUERY_GET_USERS = gql`query getUsers {
-    users {
-        data {
-            id
-            email
-            name
-        }
-    }
-}`
+import { UserListContainer } from './containers'
 
 const MUTATION_ADD_USER = gql`mutation addUser($user: CreateUserInput!) {
     createUser(input: $user) {
@@ -63,7 +50,7 @@ const App = () => {
     }
 
     const componentToBeRendered = screen === LIST
-        ? <ListScreen toAddUser={toAddUser} />
+        ? <UserListContainer toAddUser={toAddUser} />
         : <AddEditScreen user={user} cancel={toList} />
 
     return (
@@ -72,33 +59,6 @@ const App = () => {
         </SafeAreaView>
     );
 };
-
-// List screen
-interface ListScreenProps {
-    toAddUser: () => void;
-}
-const ListScreen = (props: ListScreenProps) => {
-    const { toAddUser } = props;
-
-    return (
-        <Query query={QUERY_GET_USERS}>
-            {(response: any) => {
-                const { data, loading, error } = response as GraphQLProps;
-                const users: User[] = data && data.users ? data.users.data : [];
-                if (loading) return renderLoadingIndicator()
-                return (
-                    <View style={styles.screen}>
-                        <UserList users={users} />
-                        <Button
-                            title={'Add New User'}
-                            onPress={toAddUser}
-                        />
-                    </View>
-                )
-            }}
-        </Query>
-    )
-}
 
 const renderLoadingIndicator = () => {
     return <ActivityIndicator size={"large"} color="green" />;
